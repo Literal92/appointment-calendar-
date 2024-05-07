@@ -1,0 +1,31 @@
+<div class="flex items-center pt-3 mx-auto" class="relative">
+  <table class="border w-full">
+    <thead class="border">
+      <tr>
+        <th *ngFor="let day of daysOfWeek">
+          <p class="pt-3 flex justify-center items-center text-base font-medium  text-pale-gray">{{ day }}</p>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="border" *ngFor="let week of weeks; let i = index">
+        <td class="pt-1 border" *ngFor="let day of week" cdkDropList (cdkDropListDropped)="onDrop($event)">
+          <div (click)="openAppointmentForm(day.day)" class="py-16 px-2 cursor-pointer flex justify-center items-start">
+            {{ day.day }}
+          </div>
+          <div *ngIf="selectedAppointment && selectedAppointment.date === day.day" cdkDrag
+            (cdkDragStarted)="onDragStarted($event, selectedAppointment)">
+            <div class="text-center">
+              <div class="bg-fuchsia-300 relative">
+                <span (click)="onDeleteAppointment()" class="absolute top-0 end-0 pe-1 cursor-pointer ">
+                  <i class="fa-solid fa-xmark" style="color: #000000;"></i>
+                </span>
+                <p>{{ selectedAppointment.title }}</p>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

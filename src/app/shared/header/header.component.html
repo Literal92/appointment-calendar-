@@ -1,0 +1,17 @@
+<header class="flex justify-between items-center px-12 bg-purple">
+  <div class="flex items-center justify-between gap-6 mt-4">
+    <div class="mb-4">
+      <button mat-raised-button class="mx-2">{{ currentMonth | date: 'MMMM dd y' }}</button>
+    </div>
+  </div>
+  <p class="text-2xl text-white font-bold text-center my-10">Calender</p>
+  <div class="relative inline-flex">
+    <mat-form-field>
+      <mat-select matNativeControl required [(ngModel)]="selectedOption" (ngModelChange)="onSelectChange()">
+        <mat-option value="day">Day</mat-option>
+        <mat-option value="week">Week</mat-option>
+        <mat-option value="month">Month</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</header>
