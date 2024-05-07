@@ -10,3 +10,7 @@ This is a calendar application built with Angular. It allows users to manage app
 
 ```bash
 git clone <repository-url>
+cd calendar
+npm install
+npm start
+```
