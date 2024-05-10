@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Appointment } from '../models/appointment.model';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -7,21 +8,49 @@ import { Appointment } from '../models/appointment.model';
 
 export class AppointmentsService {
 
-  appointments: Appointment[] = [];
+  private appointments: Appointment[] = [];
+  appointments$: BehaviorSubject<Appointment[]> = new BehaviorSubject<Appointment[]>([]);
 
-  showAppointmentForm = false
+  constructor() {
+    this.loadAppointmentsFromLocalStorage();
+  }
+
+  private loadAppointmentsFromLocalStorage() {
+    const storedAppointments = localStorage.getItem('appointments');
+    if (storedAppointments) {
+      this.appointments = JSON.parse(storedAppointments);
+      this.appointments$.next(this.appointments);
+    }
+  }
+
+  private saveAppointmentsToLocalStorage() {
+    localStorage.setItem('appointments', JSON.stringify(this.appointments));
+    this.appointments$.next(this.appointments);
+  }
 
   addAppointment(appointment: Appointment) {
+    appointment.id = Date.now().toString();
     this.appointments.push(appointment);
+    this.saveAppointmentsToLocalStorage();
   }
+
   getAppointmentsForDate(date: string): Appointment[] {
     return this.appointments.filter(appointment => {
       const appointmentStartTime = new Date(appointment.startTime);
       const appointmentEndTime = new Date(appointment.endTime);
       const selectedDate = new Date(date);
-  
+
+      // Set time component to midnight for appointmentStartTime
+      appointmentStartTime.setHours(0, 0, 0, 0);
+
+      // Set time component to midnight for appointmentEndTime
+      appointmentEndTime.setHours(0, 0, 0, 0);
       return appointmentStartTime <= selectedDate && selectedDate <= appointmentEndTime;
     });
   }
 
+  deleteAppointment(appointmentId: string) {
+    this.appointments = this.appointments.filter(appointment => appointment.id !== appointmentId);
+    this.saveAppointmentsToLocalStorage();
+  }
 }

@@ -29,9 +29,6 @@ export class CalendarComponent {
     this.renderer = rendererFactory.createRenderer(null, null);
   }
 
-  // === Appointment form condition === //
-  showAppointmentForm = this.appointmentsService.showAppointmentForm;
-
   appointmentDate: string | null = null;
   selectedAppointment: Appointment | null = null;
 
@@ -51,14 +48,8 @@ export class CalendarComponent {
     if (!appointment.title) {
       appointment.title = 'Unknown Title';
     }
-    if (this.appointmentDate) {
-      appointment.date = this.appointmentDate;
-      this.selectedAppointment = appointment;
-    }
-  }
 
-  onCloseForm() {
-    this.showAppointmentForm = false;
+    this.appointmentsService.addAppointment(appointment);
   }
 
   // ----------- DAY CHANGE -------------//

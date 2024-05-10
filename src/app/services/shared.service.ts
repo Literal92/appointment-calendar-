@@ -50,6 +50,8 @@ export class SharedService {
     if (this.currentView === 'month') {
       const startDate = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth(), 1);
       const endDate = new Date(this.currentMonth.getFullYear(), this.currentMonth.getMonth() + 1, 0);
+      const month = this.currentMonth.getMonth() + 1;
+      const year = this.currentMonth.getFullYear();
       const numDays = endDate.getDate();
       const startDay = startDate.getDay();
 
@@ -59,15 +61,15 @@ export class SharedService {
       for (let i = 0; i < startDay; i++) {
         currentWeek.push({ day: '' });
       }
-
+      
       for (let day = 1; day <= numDays; day++) {
-        currentWeek.push({ day });
+        currentWeek.push({ day, date: new Date(`${year}-${month}-${day}`) });
         if (currentWeek.length === 7) {
           weeks.push(currentWeek);
           currentWeek = [];
         }
       }
-
+      
       if (currentWeek.length > 0) {
         weeks.push(currentWeek);
       }

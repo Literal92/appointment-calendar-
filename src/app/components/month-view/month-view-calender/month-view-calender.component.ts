@@ -5,6 +5,7 @@ import { AppointmentsService } from 'src/app/services/appointment.service';
 import { Appointment } from 'src/app/models/appointment.model';
 import { MatDialog } from '@angular/material/dialog';
 import { AppointmentFormComponent } from 'src/app/shared/appointment-form/appointment-form.component';
+import { map } from 'rxjs';
 
 
 @Component({
@@ -16,7 +17,8 @@ import { AppointmentFormComponent } from 'src/app/shared/appointment-form/appoin
 export class MonthViewCalenderComponent {
   [x: string]: any;
   daysOfWeek = this.sharedService.daysOfWeek;
-  weeks: any[] = []
+  appointments: Appointment[] = [];
+  weeks: any[] = [];
 
   constructor(
     public sharedService: SharedService,
@@ -24,16 +26,25 @@ export class MonthViewCalenderComponent {
     private appointmentsService: AppointmentsService
   ) {
     // Handle changes to the week object here
-    this.sharedService.weekSubject.subscribe((week: Date[]) => {
-      this.weeks = week;
-    });
-   }
+    this.sharedService.weekSubject.pipe(
+      map((week: Date[]) => {
+        this.weeks = week;
+      }
+      )).subscribe();
 
+    appointmentsService.appointments$.pipe(
+      map(res => {
+        this.appointments = res;
+      })
+    ).subscribe();
+  }
+
+  onGetAppointment(date: string) {
+    return this.appointmentsService.getAppointmentsForDate(date);
+  }
 
   // === Appointment form condition === //
-
-  showAppointmentForm = this.appointmentsService.showAppointmentForm;
-  openAppointmentForm(day: string) {
+  openAppointmentForm(day: Date) {
     const dialogRef = this.dialog.open(AppointmentFormComponent, {
       data: day,
       width: '25%'
@@ -44,7 +55,7 @@ export class MonthViewCalenderComponent {
         this.onAddAppointment(result)
       }
     });
-    this.selectedDate = day;
+    this.selectedDate = day.getDate().toString();
   }
 
   selectedDate: string | null = null;
@@ -55,40 +66,13 @@ export class MonthViewCalenderComponent {
     if (!appointment.title) {
       appointment.title = 'Unknown Title';
     }
-    if (this.selectedDate) {
-      appointment.date = this.selectedDate;
-      this.selectedAppointment = appointment;
-    }
-    this.showAppointmentForm = false;
-  }
-  onDeleteAppointment() {
-    if (this.selectedAppointment) {
-      if (this.selectedAppointment.date) {
-        const selectedAppointmentTimestamp = new Date(this.selectedAppointment.date).getTime();
 
-        const index = this.appointmentsService.appointments.findIndex(
-          (appointment) => {
-            if (appointment.date) {
-              const appointmentTimestamp = new Date(appointment.date).getTime();
-              return appointmentTimestamp === selectedAppointmentTimestamp &&
-                appointment.startTime === this.selectedAppointment?.startTime &&
-                appointment.endTime === this.selectedAppointment?.endTime;
-            }
-            return false;
-          }
-        );
-
-        if (index !== -1) {
-          this.appointmentsService.appointments.splice(index, 1);
-        }
-      }
-
-      this.selectedAppointment = null;
-    }
+    this.selectedAppointment = appointment;
+    this.appointmentsService.addAppointment(appointment);
   }
 
-  onCloseForm() {
-    this.showAppointmentForm = false;
+  onDeleteAppointment(id: string) {
+    this.appointmentsService.deleteAppointment(id);
   }
 
   // === Drag & Drop === //

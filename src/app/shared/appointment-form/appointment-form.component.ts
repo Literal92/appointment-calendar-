@@ -40,9 +40,11 @@ export class AppointmentFormComponent {
 
   constructor(
     public dialogRef: MatDialogRef<AppointmentFormComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Appointment,
+    @Inject(MAT_DIALOG_DATA) public data: Date,
   ) { 
     if (data) {
+      this.appointmentForm.controls['startTime'].setValue(data);
+      this.appointmentForm.controls['endTime'].setValue(data);
     }
   }
 
