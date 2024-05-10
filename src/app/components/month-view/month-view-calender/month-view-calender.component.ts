@@ -85,12 +85,29 @@ export class MonthViewCalenderComponent {
   }
 
   onDrop(event: CdkDragDrop<string[]> | any) {
-    const newDate = event.container.data[event.currentIndex];
+    const date = event.container.data;
 
-    if (this.selectedAppointment) {
-      this.selectedAppointment.date = '3';
+    if (this.selectedAppointment && date) {
+      const appointmentStartTime = new Date(this.selectedAppointment.startTime);
+      const appointmentEndTime = new Date(this.selectedAppointment.endTime);
+      const difDays = this.getDates(appointmentStartTime, appointmentEndTime)
+      const newDate = new Date(date);
+      this.selectedAppointment.startTime = new Date(date);
+      this.selectedAppointment.endTime = difDays ? new Date(newDate.setDate(newDate.getDate() + difDays)) : newDate;
+
+      this.appointmentsService.updateAppointment(this.selectedAppointment)
     }
   }
 
+  private getDates(from: Date, to: Date) {
+    let daysArr = 0;
+    let tempDate = from;
 
+    while (tempDate < to) {
+      tempDate.setUTCDate(tempDate.getUTCDate() + 1);
+      daysArr++;
+    }
+
+    return daysArr;
+  }
 }

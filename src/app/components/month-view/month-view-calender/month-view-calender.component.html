@@ -7,28 +7,27 @@
         </th>
       </tr>
     </thead>
-    <tbody>
+    <tbody cdkDropListGroup>
       <tr class="border" *ngFor="let week of weeks; let i = index">
-        <td class="pt-1 border" *ngFor="let day of week" cdkDropList (cdkDropListDropped)="onDrop($event)">
+        <td class="pt-1 border" *ngFor="let day of week" cdkDropList [cdkDropListData]="day.date"
+          (cdkDropListDropped)="onDrop($event)">
           <div (click)="openAppointmentForm(day.date)"
             class="py-16 px-2 cursor-pointer flex justify-center items-start">
             {{ day.day }}
           </div>
-          <ng-container *ngIf="day.date">
-            <ng-container *ngFor="let appointment of onGetAppointment(day.date)">
-              <div cdkDrag (cdkDragStarted)="onDragStarted($event, appointment)">
-                <div class="text-center">
-                  <div class="bg-fuchsia-300 relative">
-                    <span (click)="onDeleteAppointment(appointment.id)" class="absolute top-0 end-0 pe-1 cursor-pointer ">
-                      <i class="fa-solid fa-xmark" style="color: #000000;"></i>
-                      <mat-icon aria-hidden="false" aria-label="Creat" fontIcon="delete"></mat-icon>
-                    </span>
-                    <p>{{ appointment.title }}</p>
-                  </div>
+          <div *ngIf="day.date" class="cursor-pointer">
+            <div *ngFor="let appointment of onGetAppointment(day.date)" cdkDrag
+              (cdkDragStarted)="onDragStarted($event, appointment)">
+              <div class="text-center">
+                <div class="bg-fuchsia-300 relative">
+                  <span (click)="onDeleteAppointment(appointment.id)" class="absolute top-0 end-0 pe-1">
+                    <mat-icon aria-hidden="false" aria-label="Creat" fontIcon="delete"></mat-icon>
+                  </span>
+                  <p>{{ appointment.title }}</p>
                 </div>
               </div>
-            </ng-container>
-          </ng-container>
+            </div>
+          </div>
         </td>
       </tr>
     </tbody>

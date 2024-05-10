@@ -49,6 +49,14 @@ export class AppointmentsService {
     });
   }
 
+  updateAppointment(updatedAppointment: Appointment) {
+    const index = this.appointments.findIndex(appointment => appointment.id === updatedAppointment.id);
+    if (index !== -1) {
+      this.appointments[index] = updatedAppointment;
+      this.saveAppointmentsToLocalStorage();
+    }
+  }
+
   deleteAppointment(appointmentId: string) {
     this.appointments = this.appointments.filter(appointment => appointment.id !== appointmentId);
     this.saveAppointmentsToLocalStorage();
