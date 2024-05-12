@@ -76,10 +76,6 @@ export class MonthViewCalenderComponent {
   }
 
   // === Drag & Drop === //
-  // setSelectedDay(day: string) {
-  //   this.selectedDate = day;
-  // }
-
   onDragStarted(event: CdkDragStart, appointment: Appointment) {
     this.selectedAppointment = appointment;
   }
